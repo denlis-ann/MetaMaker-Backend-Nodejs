@@ -1,0 +1,299 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "version": "1.0.0",
+      "title": "MetaMaker - NODEJS",
+      "description": "MetaMaker Node APIs",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": ["http"],
+    "components": {
+      "securitySchemes": {
+        "Bearer": {
+          "type": "http",
+          "description": " JWT authorization of an API",
+          "name": "Authorization",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "schemas": {
+        "UserProfile": {
+          "type": "object",
+          "required": ["public_address", "nonce", "is_active"],
+          "properties": {
+            "nonce": {
+              "type": "integer",
+              "uniqueItems": true
+            },
+            "public_address": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "nick_name": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "profile_pic": {
+              "type": "string"
+            },
+            "is_active": {
+              "type": "boolean"
+            },
+            "created": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          }
+        },
+        "MetamaskWallet": {
+          "type": "object",
+          "required": ["userId", "publicAddress"],
+          "properties": {
+            "userId": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "publicAddress": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "MetamaskSign": {
+          "type": "object",
+          "required": ["userId", "publicAddress", "signature"],
+          "properties": {
+            "userId": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "publicAddress": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "signature": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "MetamaskResponse": {
+          "type": "object",
+          "required": ["user_id", "public_address", "nonce"],
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "public_address": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "nonce": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "SocialLogin": {
+          "type": "object",
+          "required": ["userId"],
+          "properties": {
+            "userId": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "CreateUser": {
+          "type": "object",
+          "required": ["publicAddress"],
+          "properties": {
+            "publicAddress": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "AuthUser": {
+          "type": "object",
+          "required": ["publicAddress", "signature"],
+          "properties": {
+            "publicAddress": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "signature": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "Token": {
+          "type": "object",
+          "required": ["access_token", "refresh_token"],
+          "properties": {
+            "access_token": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "refresh_token": {
+              "type": "string",
+              "uniqueItems": true
+            },
+            "id": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "RefreshUser": {
+          "type": "object",
+          "required": ["refreshToken"],
+          "properties": {
+            "refreshToken": {
+              "type": "string",
+              "uniqueItems": true
+            }
+          }
+        },
+        "nft-getOwnersForToken": {
+          "type": "object",
+          "required": ["contractAddress", "tokenId"],
+          "properties": {
+            "contractAddress": {
+              "type": "string"
+            },
+            "tokenId": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+      "/users": {
+        "get": {
+          "tags": ["Auth"],
+          "summary": "Get user with the given public address",
+          "parameters": [
+            {
+              "name": "publicAddress",
+              "example": "0x78b682BEc1A29a3F36edcbD136f7327746989202",
+              "in": "query",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/UserProfile"
+              }
+            },
+            "400": {
+              "description": "Failed"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Auth"],
+          "summary": "Create a user with the public address",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUser"
+                }
+              }
+            }
+          },
+          "produces": ["application/json"],
+          "responses": {
+            "201": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/UserProfile"
+              },
+              "400": {
+                "description": "Failed"
+              }
+            }
+          }
+        }
+      },
+      "/auth": {
+        "post": {
+          "tags": ["Auth"],
+          "summary": "Authenticate user with the public address and signature",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
+          },
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/Token"
+              },
+              "400": {
+                "description": "Failed"
+              }
+            }
+          }
+        }
+      },
+      "/nft/getOwnersForToken": {
+        "post": {
+          "tags": ["NFT"],
+          "summary": "Get the owner(s) for a token.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/nft-getOwnersForToken"
+                }
+              }
+            }
+          },
+          "security": [{ "Bearer": [] }],
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "400": {
+                "description": "Failed"
+              },
+              "401": {
+                "description": "UnAuthorized Error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
