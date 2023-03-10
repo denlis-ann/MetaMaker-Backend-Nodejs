@@ -176,6 +176,24 @@
               "type": "string"
             }
           }
+        },
+        "nft-getOwnersForCollection": {
+          "type": "object",
+          "required": ["contractAddress"],
+          "properties": {
+            "contractAddress": {
+              "type": "string"
+            }
+          }
+        },
+        "nft-searchContractMetadata": {
+          "type": "object",
+          "required": ["contractAddress"],
+          "properties": {
+            "query": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -272,6 +290,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/nft-getOwnersForToken"
+                }
+              }
+            }
+          },
+          "security": [{ "Bearer": [] }],
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "400": {
+                "description": "Failed"
+              },
+              "401": {
+                "description": "UnAuthorized Error"
+              }
+            }
+          }
+        }
+      },
+      "/nft/getOwnersForCollection": {
+        "post": {
+          "tags": ["NFT"],
+          "summary": "Gets all owners for a given NFT contract.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/nft-getOwnersForCollection"
+                }
+              }
+            }
+          },
+          "security": [{ "Bearer": [] }],
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "400": {
+                "description": "Failed"
+              },
+              "401": {
+                "description": "UnAuthorized Error"
+              }
+            }
+          }
+        }
+      },
+      "/nft/searchContractMetadata": {
+        "post": {
+          "tags": ["NFT"],
+          "summary": "Search for a keyword across metadata of all ERC-721 and ERC-1155 smart contracts",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/nft-searchContractMetadata"
                 }
               }
             }
